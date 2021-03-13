@@ -246,6 +246,7 @@ FLOWS = [
     "upnp",
     "velbus",
     "vera",
+    "verisure",
     "vesync",
     "vilfo",
     "vizio",
