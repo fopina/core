@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Callable
+from typing import Any, Callable
 
 from verisure import Error as VerisureError
 
@@ -14,6 +14,7 @@ from homeassistant.helpers.entity_platform import current_platform
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import (
+    CONF_GIID,
     CONF_LOCK_CODE_DIGITS,
     CONF_LOCK_DEFAULT_CODE,
     DEFAULT_LOCK_CODE_DIGITS,
@@ -74,6 +75,22 @@ class VerisureDoorlock(CoordinatorEntity, LockEntity):
     def name(self) -> str:
         """Return the name of the lock."""
         return self.coordinator.data["locks"][self.serial_number]["area"]
+
+    @property
+    def unique_id(self) -> str:
+        """Return the unique ID for this entity."""
+        return f"{self.serial_number}"
+
+    @property
+    def device_info(self) -> dict[str, Any]:
+        """Return device information about this entity."""
+        return {
+            "name": self.coordinator.data["locks"][self.serial_number]["area"],
+            "manufacturer": "Verisure",
+            "model": "Lockguard Smartlock",
+            "identifiers": {(DOMAIN, self.serial_number)},
+            "via_device": (DOMAIN, self.coordinator.entry.data[CONF_GIID]),
+        }
 
     @property
     def available(self) -> bool:
